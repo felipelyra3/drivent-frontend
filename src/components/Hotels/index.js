@@ -3,13 +3,16 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 
 import useHotels from '../../hooks/api/useHotels';
+import useTicket from '../../hooks/api/useTicket';
 
-import { ErrorMessageWrapper } from './ErrorMessageWrapper';
+import CannotListHotelsMessage from './cannotListHotelsError';
 
 export default function Hotels() {
   const { gethotels } = useHotels();
+  const { getTicket } = useTicket();
   const [data, setData] = useState([]);
-  const [paymentRequired, setPaymentRequired] = useState(false);
+  const [paymentRequired, setPaymentRequired] = useState(true);
+  const [cannotListHotels, setCannotListHotels] = useState(false);
 
   useEffect(() => {
     gethotels()
@@ -18,15 +21,20 @@ export default function Hotels() {
         setData(hotelsData);
       })
       .catch((err) => {
-        if(err.message === 'Request failed with status code 402') {setPaymentRequired(true);}
+        setCannotListHotels(true);
       });
+    getTicket()
+      .then(resp => {
+        if(resp.TicketType.isRemote) {setPaymentRequired(false);}
+      })
+      .catch(err => {/*TODO: A pessoa ainda não tem ticket */});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return( 
     <>
       <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-      {paymentRequired? <ErrorMessageWrapper><div><p>Você precisa ter confirmado pagamento antes de fazer a escolha de hospedagem</p></div></ErrorMessageWrapper>: <p>Hotel: Em breve!</p>}
+      {cannotListHotels? <CannotListHotelsMessage paymentRequired={paymentRequired}/> : <p>Hotel: Em breve!</p>}
     </>);
 }
 
