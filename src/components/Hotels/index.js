@@ -22,7 +22,6 @@ export default function Hotels() {
       })
       .catch((err) => {
         setCannotListHotels(true);
-        setCannotListHotels(true);
       });
     getTicket()
       .then(resp => {
