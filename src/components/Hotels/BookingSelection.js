@@ -2,10 +2,17 @@ import { Hotels, HotelsWrapper } from './HotelsSelectionWrapper';
 import HotelTemplade from './HotelCardTemplade';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import useRooms from '../../hooks/api/useRooms';
 
 export default function BookingSelection({ data }) {
   const [selected, setSelected] = useState(null);
+  const [roomdata, setRoomdata] = useState(null);
+  const { getrooms } = useRooms();
+  useEffect(() => {
+    getrooms()
+      .then((response) => {setRoomdata(response);});
+  }, [selected]);
 
   return (
     <HotelsWrapper>
