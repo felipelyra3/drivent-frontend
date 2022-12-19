@@ -13,5 +13,6 @@ height: calc(100% - 100px);
 p{
   max-width: 450px;
   line-height: 25px;
+  text-align: center;
 }
 `;
