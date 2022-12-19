@@ -6,23 +6,28 @@ import useHotels from '../../hooks/api/useHotels';
 import useTicket from '../../hooks/api/useTicket';
 
 import CannotListHotelsMessage from './cannotListHotelsError';
+import BookingSelection from './BookingSelection';
 
 export default function Hotels() {
   const { gethotels } = useHotels();
   const { getTicket } = useTicket();
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [paymentRequired, setPaymentRequired] = useState(true);
   const [cannotListHotels, setCannotListHotels] = useState(false);
 
   useEffect(() => {
     gethotels()
       .then((resp) => {
-        const hotelsData = resp.data;
-        setData(hotelsData);
+        setData(resp);
       })
       .catch((err) => {
         setCannotListHotels(true);
       });
+    getTicket()
+      .then(resp => {
+        if(resp.TicketType.isRemote) {setPaymentRequired(false);}
+      })
+      .catch(err => {/*TODO: A pessoa ainda não tem ticket */});
     getTicket()
       .then(resp => {
         if(resp.TicketType.isRemote) {setPaymentRequired(false);}
@@ -34,7 +39,7 @@ export default function Hotels() {
   return( 
     <>
       <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-      {cannotListHotels? <CannotListHotelsMessage paymentRequired={paymentRequired}/> : <p>Hotel: Em breve!</p>}
+      {cannotListHotels? <CannotListHotelsMessage paymentRequired={paymentRequired}/> : <BookingSelection data={data}/>}
     </>);
 }
 
