@@ -21,8 +21,7 @@ export default function RoomTemplate({ id, name, capacity, hotelId, occupied, se
     }
     setArrperson(aux);
   }, [selectedroom]);
-
-  return (
+  return(
     <Room invalid={capacity===occupied? 'true' : 'false'} select={selectedroom===id? 'true':'false'} onClick={() => { if(capacity!==occupied) { setSelectedroom(id);} }}>
       <p invalid={capacity===occupied? 'true':'false'}>{name}</p>
       <Vacancies>
