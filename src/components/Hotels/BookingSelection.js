@@ -24,6 +24,7 @@ export default function BookingSelection({ data }) {
   const [selected, setSelected] = useState(null);
   const [roomdata, setRoomdata] = useState(null);
   const { getrooms } = useRooms();
+
   useEffect(() => {
     if(selected) {
       getrooms(selected)
