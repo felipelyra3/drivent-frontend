@@ -23,9 +23,6 @@ function sorted(data) {
 export default function BookingSelection({ data }) {
   const [selected, setSelected] = useState(null);
   const [roomdata, setRoomdata] = useState(null);
-  const [single, setSingle] = useState(false);//booleano que define o tipo de quarto presente no hotel
-  const [double, setDouble] = useState(false);
-  const [triple, setTriple] = useState(false);
   const { getrooms } = useRooms();
   useEffect(() => {
     if(selected) {
@@ -45,7 +42,7 @@ export default function BookingSelection({ data }) {
       </Hotels>
       {selected?
         <Rooms>
-          {roomdata?roomdata.Rooms.map((el, index) => <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} setSingle={setSingle} setDouble={setDouble} setTriple={setTriple}/>):null}
+          {roomdata?roomdata.Rooms.map((el, index) => <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} setRoomdata={setRoomdata} roomdata={roomdata}/>):null}
         </Rooms>
         :null}
     </HotelsWrapper>
