@@ -2,18 +2,18 @@ import Typography from '@material-ui/core/Typography';
 import { Hotel } from './HotelsSelectionWrapper';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
-import useRooms from '../../hooks/api/useRooms';
+import useHotel from '../../hooks/api/useHotelById';
 
 export default function HotelTemplade({ image, name, id, selected, setSelected }) {
-  const { getrooms } = useRooms();
+  const { gethotel } = useHotel();
   const [Rooms, setRooms] = useState([]);
   const [options, setOptions] = useState([]);
 
   useEffect (() => {
-    getrooms(id)
+    if(id) {gethotel(id)
       .then((resp) => {
         setRooms(resp.Rooms);
-      });
+      });}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
