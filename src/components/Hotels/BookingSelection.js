@@ -30,6 +30,7 @@ export default function BookingSelection({ data }) {
         .then((resp) => {const obj = sorted(resp); setRoomdata(obj);});
     }
   }, [selected]);
+  //console.log(roomdata); //occupied = vagas do quarto ocupadas
   return (
     <HotelsWrapper>
       <StyledTypography variant="h2">Primeiro, escolha seu hotel</StyledTypography>
@@ -42,7 +43,17 @@ export default function BookingSelection({ data }) {
       </Hotels>
       {selected?
         <Rooms>
-          {roomdata?roomdata.Rooms.map((el, index) => <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} setRoomdata={setRoomdata} roomdata={roomdata}/>):null}
+          {roomdata?roomdata.Rooms.map((el, index) => {  
+            if(el.capacity === 1 && roomdata.single == null) {
+              roomdata.single = true;
+              setRoomdata(roomdata);
+            }else if(el.capacity === 2 && roomdata.double == null) {
+              roomdata.double = true;
+              setRoomdata(roomdata);
+            }else if(el.capacity === 3 && roomdata.triple == null) {
+              roomdata.triple = true;
+              setRoomdata(roomdata);
+            };return <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} occupied={el.occupied}/>;}):null}
         </Rooms>
         :null}
     </HotelsWrapper>
