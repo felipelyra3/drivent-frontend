@@ -62,8 +62,7 @@ export default function Activities() {
       <StyledTypography variant="h4">Escolha de Atividades</StyledTypography>
       <ErrorWrapper>
         <p>
-          Sua modalidade de ingresso não necessita escolher atividade. 
-          Você terá acesso a todas as atividades.
+          Aguarde as atividades!
         </p>
       </ErrorWrapper>
     </>
