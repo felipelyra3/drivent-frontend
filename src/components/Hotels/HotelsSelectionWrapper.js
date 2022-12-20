@@ -20,8 +20,25 @@ export const Hotels = styled.div`
   gap: 20px;
 `;
 
+export const Rooms = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+`;
+
+export const Room = styled.div`
+  width: 196px;
+  height: 45px;
+  border-radius: 10px;
+  padding: 14px;
+  p{
+    font-size: 20px;
+    font-weight: bold;
+  }
+`;
+
 export const Hotel = styled.div`
-width: 196px;
+    width: 196px;
     height: 264px;
     background-color: ${(props) => (props.selected ? '#FFEED2' : '#EBEBEB')};
     border-radius: 10px;
