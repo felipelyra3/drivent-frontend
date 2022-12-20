@@ -6,6 +6,5 @@ export async function getRoomsInformations(hotelId, token) {
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log(response.data.Rooms);
   return response.data;
 }
