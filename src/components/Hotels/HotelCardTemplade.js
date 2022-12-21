@@ -3,17 +3,22 @@ import { Hotel } from './HotelsSelectionWrapper';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import useHotel from '../../hooks/api/useHotelById';
+import useHotelVacancies from '../../hooks/api/useHotelVacancies';
 
 export default function HotelTemplade({ image, name, id, selected, setSelected }) {
   const { gethotel } = useHotel();
+  const { gethotelVacancies } = useHotelVacancies();
   const [Rooms, setRooms] = useState([]);
+  const [vacancies, setVacancies] = useState(null);
   const [options, setOptions] = useState([]);
 
   useEffect (() => {
     if(id) {gethotel(id)
       .then((resp) => {
         setRooms(resp.Rooms);
-      });}
+      });
+    gethotelVacancies(id).then(resp => setVacancies(resp));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,7 +57,7 @@ export default function HotelTemplade({ image, name, id, selected, setSelected }
       <h4 >Tipos de acomodação:</h4>
       {<h3>{options}</h3>}
       <h4>Vagas disponíveis:</h4>
-      <h3>103</h3>
+      <h3>{vacancies?vacancies.vacancies:null}</h3>
     </Hotel>
   );
 }

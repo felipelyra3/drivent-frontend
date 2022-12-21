@@ -19,3 +19,13 @@ export async function getHotelById(token, id) {
 
   return response.data;
 }
+
+export async function getHotelVacancies(token, id) {
+  const response = await api.get(`/hotels/vacancies/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+}
