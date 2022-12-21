@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import useRooms from '../../hooks/api/useRooms';
 import RoomTemplate from './RoomTemplate';
 import useBooking from '../../hooks/api/useBooking';
+import useBookingDone from '../../hooks/api/useBookingDone';
 
 function sorted(data) {
   let aux = data.Rooms;
@@ -28,6 +29,18 @@ export default function BookingSelection({ data }) {
   const [endselection, setEndselection] = useState(false);
   const { getrooms } = useRooms();
   const { postbooking } = useBooking();
+  const { getbooking } = useBookingDone();
+
+  useEffect(() => {
+    getbooking()
+      .then((resp) => {
+        setEndselection(true);
+        const room = Number(resp.Room.id);
+        const hotel = Number(resp.Room.hotelId);
+        setSelected(hotel);
+        setSelectedroom(room);
+      }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if(selected) {
@@ -44,14 +57,27 @@ export default function BookingSelection({ data }) {
   }
   return (
     <HotelsWrapper>
-      <StyledTypography variant="h2">Primeiro, escolha seu hotel</StyledTypography>
-      <Hotels>
-        {
-          data?.map((el, i) => 
-            <HotelTemplade image={el.image} name={el.name} id={el.id} key={i} selected={selected} setSelected={setSelected}/>
-          )
-        }
-      </Hotels>
+      {endselection&&roomdata?<>
+        <StyledTypography variant="h2">Você já escolheu seu quarto:</StyledTypography>
+        <Hotels>
+          {
+            data?.filter(el => el.id === selected).map((el, i) => 
+              <HotelTemplade image={el.image} name={el.name} id={el.id} key={i} selected={selected} setSelected={setSelected} endselection={endselection} roomdata={roomdata.Rooms.filter(el => el.id === selectedroom)[0]}/>
+            )
+          }
+        </Hotels>
+        <Selectroom>Trocar de Quarto</Selectroom>
+      </>:null}
+      {!endselection?<>
+        <StyledTypography variant="h2">Primeiro, escolha seu hotel</StyledTypography>
+        <Hotels>
+          {
+            data?.map((el, i) => 
+              <HotelTemplade image={el.image} name={el.name} id={el.id} key={i} selected={selected} setSelected={setSelected} endselection={endselection} roomdata={null}/>
+            )
+          }
+        </Hotels>
+      </>:null}
       {selected&&!endselection?
         <>
           <StyledTypography variant="h2">Ótima pedida! Agora escolha seu quarto:</StyledTypography>
@@ -71,7 +97,6 @@ export default function BookingSelection({ data }) {
           <Selectroom onClick={sendData}>Reservar Quarto</Selectroom>
         </>
         :null}
-      {endselection?<p>To do: mensagem de pedido realizado</p>: null}
     </HotelsWrapper>
   );
 }

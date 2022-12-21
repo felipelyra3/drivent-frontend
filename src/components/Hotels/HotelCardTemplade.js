@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import useHotel from '../../hooks/api/useHotelById';
 import useHotelVacancies from '../../hooks/api/useHotelVacancies';
 
-export default function HotelTemplade({ image, name, id, selected, setSelected }) {
+export default function HotelTemplade({ image, name, id, selected, setSelected, endselection, roomdata }) {
   const { gethotel } = useHotel();
   const { gethotelVacancies } = useHotelVacancies();
   const [Rooms, setRooms] = useState([]);
@@ -20,7 +20,7 @@ export default function HotelTemplade({ image, name, id, selected, setSelected }
     gethotelVacancies(id).then(resp => setVacancies(resp));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [endselection]);
 
   useEffect(() => {
     if(Rooms.length>0) {
@@ -48,18 +48,31 @@ export default function HotelTemplade({ image, name, id, selected, setSelected }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Rooms]);
-
-  return(
-    <Hotel selected={selected === id} onClick={() => setSelected(id)}>
-      <img src={image} alt={name}/>
-      <StyledTypography variant="h2">{name}</StyledTypography>
-
-      <h4 >Tipos de acomodação:</h4>
-      {<h3>{options}</h3>}
-      <h4>Vagas disponíveis:</h4>
-      <h3>{vacancies?vacancies.vacancies:null}</h3>
-    </Hotel>
-  );
+  if(endselection) {
+    return(
+      <Hotel selected={selected === id} onClick={() => setSelected(id)}>
+        <img src={image} alt={name}/>
+        <StyledTypography variant="h2">{name}</StyledTypography>
+  
+        <h4 >Quarto reservado</h4>
+        {<h3>{roomdata.name} ({roomdata.capacity===1?'Single':(roomdata.capacity===2?'Double':'Triple')})</h3>}
+        <h4>Pessoas no seu quarto</h4>
+        <h3>Você {roomdata.occupied>0?`e mais ${roomdata.occupied}`:null}</h3>
+      </Hotel>
+    );
+  } else {
+    return(
+      <Hotel selected={selected === id} onClick={() => setSelected(id)}>
+        <img src={image} alt={name}/>
+        <StyledTypography variant="h2">{name}</StyledTypography>
+  
+        <h4 >Tipos de acomodação:</h4>
+        {<h3>{options}</h3>}
+        <h4>Vagas disponíveis:</h4>
+        <h3>{vacancies?vacancies.vacancies:null}</h3>
+      </Hotel>
+    );
+  }
 }
 
 const StyledTypography = styled(Typography)`
