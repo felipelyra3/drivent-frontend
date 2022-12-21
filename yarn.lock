@@ -9788,6 +9788,13 @@
     "regenerator-runtime" "^0.13.7"
     "whatwg-fetch" "^3.4.1"
 
+"react-bootstrap-icons@^1.10.2":
+  "integrity" "sha512-PC72g6uARdSxZH+ViBbul3FRWKuIhiJajahwt1h0daPBDw789KqpA+x3hrJpSUyQMF0PQ9LfWxu1a0O67bqPeg=="
+  "resolved" "https://registry.npmjs.org/react-bootstrap-icons/-/react-bootstrap-icons-1.10.2.tgz"
+  "version" "1.10.2"
+  dependencies:
+    "prop-types" "^15.7.2"
+
 "react-credit-cards@^0.8.3":
   "integrity" "sha512-88XJErkkdDjeFevOxfWYV2dUs4ddNNXJMIgutqTlUH2pYfcaDeFv9MXNGCcJKvBv4+6GEnxbCToymNRNbEt/uw=="
   "resolved" "https://registry.npmjs.org/react-credit-cards/-/react-credit-cards-0.8.3.tgz"
