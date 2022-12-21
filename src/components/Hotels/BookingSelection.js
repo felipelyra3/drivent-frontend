@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { useEffect, useState } from 'react';
 import useRooms from '../../hooks/api/useRooms';
 import RoomTemplate from './RoomTemplate';
+import useBooking from '../../hooks/api/useBooking';
 
 function sorted(data) {
   let aux = data.Rooms;
@@ -24,7 +25,9 @@ export default function BookingSelection({ data }) {
   const [selected, setSelected] = useState(null);
   const [roomdata, setRoomdata] = useState(null);
   const [selectedroom, setSelectedroom] = useState(-1);
+  const [endselection, setEndselection] = useState(false);
   const { getrooms } = useRooms();
+  const { postbooking } = useBooking();
 
   useEffect(() => {
     if(selected) {
@@ -32,7 +35,13 @@ export default function BookingSelection({ data }) {
         .then((resp) => {const obj = sorted(resp); setRoomdata(obj);});
     }
   }, [selected]);
-  //console.log(roomdata); //occupied = vagas do quarto ocupadas
+
+  function sendData() {
+    if(selectedroom >= 0) {
+      postbooking({ 'roomId': selectedroom })
+        .then(() => {setEndselection(true);});
+    }
+  }
   return (
     <HotelsWrapper>
       <StyledTypography variant="h2">Primeiro, escolha seu hotel</StyledTypography>
@@ -43,7 +52,7 @@ export default function BookingSelection({ data }) {
           )
         }
       </Hotels>
-      {selected?
+      {selected&&!endselection?
         <>
           <StyledTypography variant="h2">Ótima pedida! Agora escolha seu quarto:</StyledTypography>
           <Rooms>
@@ -59,9 +68,10 @@ export default function BookingSelection({ data }) {
                 setRoomdata(roomdata);
               };return <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} occupied={el.occupied} selectedroom={selectedroom} setSelectedroom={setSelectedroom}/>;}):null}
           </Rooms>
-          <Selectroom>Reservar Quarto</Selectroom>
+          <Selectroom onClick={sendData}>Reservar Quarto</Selectroom>
         </>
         :null}
+      {endselection?<p>To do: mensagem de pedido realizado</p>: null}
     </HotelsWrapper>
   );
 }
