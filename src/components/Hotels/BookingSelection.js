@@ -1,4 +1,4 @@
-import { Hotels, HotelsWrapper, Rooms } from './HotelsSelectionWrapper';
+import { Hotels, HotelsWrapper, Rooms, Selectroom } from './HotelsSelectionWrapper';
 import HotelTemplade from './HotelCardTemplade';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
@@ -23,6 +23,7 @@ function sorted(data) {
 export default function BookingSelection({ data }) {
   const [selected, setSelected] = useState(null);
   const [roomdata, setRoomdata] = useState(null);
+  const [selectedroom, setSelectedroom] = useState(-1);
   const { getrooms } = useRooms();
 
   useEffect(() => {
@@ -43,19 +44,23 @@ export default function BookingSelection({ data }) {
         }
       </Hotels>
       {selected?
-        <Rooms>
-          {roomdata?roomdata.Rooms.map((el, index) => {  
-            if(el.capacity === 1 && roomdata.single == null) {
-              roomdata.single = true;
-              setRoomdata(roomdata);
-            }else if(el.capacity === 2 && roomdata.double == null) {
-              roomdata.double = true;
-              setRoomdata(roomdata);
-            }else if(el.capacity === 3 && roomdata.triple == null) {
-              roomdata.triple = true;
-              setRoomdata(roomdata);
-            };return <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} occupied={el.occupied}/>;}):null}
-        </Rooms>
+        <>
+          <StyledTypography variant="h2">Ótima pedida! Agora escolha seu quarto:</StyledTypography>
+          <Rooms>
+            {roomdata?roomdata.Rooms.map((el, index) => {  
+              if(el.capacity === 1 && roomdata.single == null) {
+                roomdata.single = true;
+                setRoomdata(roomdata);
+              }else if(el.capacity === 2 && roomdata.double == null) {
+                roomdata.double = true;
+                setRoomdata(roomdata);
+              }else if(el.capacity === 3 && roomdata.triple == null) {
+                roomdata.triple = true;
+                setRoomdata(roomdata);
+              };return <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} occupied={el.occupied} selectedroom={selectedroom} setSelectedroom={setSelectedroom}/>;}):null}
+          </Rooms>
+          <Selectroom>Reservar Quarto</Selectroom>
+        </>
         :null}
     </HotelsWrapper>
   );

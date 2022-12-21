@@ -18,23 +18,49 @@ export const Hotels = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  margin-bottom: 20px;
 `;
 
 export const Rooms = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  row-gap: 10px;
+  column-gap: 20px;
+  margin-top: 20px;
 `;
 
 export const Room = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 196px;
   height: 45px;
   border-radius: 10px;
+  border: 1px solid #CECECE;
   padding: 14px;
+  background-color: ${(props) => (props.invalid === 'true'? '#E9E9E9' : (props.select === 'true' ? '#FFEED2' : '#FFFFFF'))};
   p{
     font-size: 20px;
     font-weight: bold;
+    color: ${(props) => (props.invalid === 'true' ? '#9D9D9D' : '#454545')};
   }
+`;
+
+export const Vacancies = styled.div`
+  display: flex;
+`;
+
+export const Selectroom = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  min-height: 40px;
+  margin: 45px 0 45px 0;
+  background-color: #E0E0E0;
+  border-radius: 4px;
+  font-size: 14px;
+  filter: drop-shadow(10px 10px 20px #E0E0E0);
 `;
 
 export const Hotel = styled.div`
