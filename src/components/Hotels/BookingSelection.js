@@ -7,6 +7,7 @@ import useRooms from '../../hooks/api/useRooms';
 import RoomTemplate from './RoomTemplate';
 import useBooking from '../../hooks/api/useBooking';
 import useBookingDone from '../../hooks/api/useBookingDone';
+import useBookingPut from '../../hooks/api/useBookingPut';
 
 function sorted(data) {
   let aux = data.Rooms;
@@ -25,15 +26,18 @@ function sorted(data) {
 export default function BookingSelection({ data }) {
   const [selected, setSelected] = useState(null);
   const [roomdata, setRoomdata] = useState(null);
-  const [selectedroom, setSelectedroom] = useState(-1);
+  const [selectedroom, setSelectedroom] = useState(0);
   const [endselection, setEndselection] = useState(false);
+  const [previousbooking, setPreviousbooking] = useState(-1);
   const { getrooms } = useRooms();
   const { postbooking } = useBooking();
   const { getbooking } = useBookingDone();
+  const { putbooking } = useBookingPut();
 
   useEffect(() => {
     getbooking()
       .then((resp) => {
+        setPreviousbooking(resp.id);
         setEndselection(true);
         const room = Number(resp.Room.id);
         const hotel = Number(resp.Room.hotelId);
@@ -51,8 +55,13 @@ export default function BookingSelection({ data }) {
 
   function sendData() {
     if(selectedroom >= 0) {
-      postbooking({ 'roomId': selectedroom })
-        .then(() => {setEndselection(true);});
+      if(previousbooking>0) {
+        putbooking({ 'roomId': selectedroom }, previousbooking)
+          .then((resp) => {setPreviousbooking(resp.bookingId); setEndselection(true);});
+      }else {
+        postbooking({ 'roomId': selectedroom })
+          .then((resp) => {setPreviousbooking(resp.bookingId); setEndselection(true);});
+      }
     }
   }
   return (
@@ -66,7 +75,7 @@ export default function BookingSelection({ data }) {
             )
           }
         </Hotels>
-        <Selectroom>Trocar de Quarto</Selectroom>
+        <Selectroom onClick={() => {setEndselection(false);}}>Trocar de Quarto</Selectroom>
       </>:null}
       {!endselection?<>
         <StyledTypography variant="h2">Primeiro, escolha seu hotel</StyledTypography>
