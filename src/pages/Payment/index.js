@@ -14,22 +14,37 @@ import TotalSum from './TotalSum';
 import HandleBookTicket from './HandleBookTicket';
 import CreditCard from './CreditCard';
 import { FaCheckCircle } from 'react-icons/fa';
+import useToken from '../../hooks/useToken';
+import VerifyIfTicketExists from './VerifyIfTicketExists';
+import VerifyIfPaymentExists from './VerifyIfPaymentExists';
 
 export default function Payment() {
   const [ticketPresential, setTicketPresential] = useState(false);
   const [ticketOnline, setTicketOnline] = useState(false);
-  const [ticketWithoutHoel, setTicketWithoutHoel] = useState(false);
+  const [ticketWithoutHotel, setTicketWithoutHotel] = useState(false);
   const [ticketWithHotel, setTicketWithHotel] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
   const [payed, setPayed] = useState(false);
+  const [ticketId, setTicketId] = useState(null);
+  //const [userId, setUserId] = useState(0);
+  const [enrollmentState, setEnrollmentState] = useState([]);
   const presential = 250;
   const online = 100;
   const withoutHotel = 0;
   const withHotel = 350;
-  const totalSum = TotalSum(ticketPresential, ticketOnline, ticketWithoutHoel, ticketWithHotel, presential, online, withoutHotel, withHotel);
+  const totalSum = TotalSum(ticketPresential, ticketOnline, ticketWithoutHotel, ticketWithHotel, presential, online, withoutHotel, withHotel);
   //const { eventInfo } = useContext(EventInfoContext);
   //const { userData: data } = useContext(UserContext);
+  
   const { enrollment } = useEnrollment();
+  const { userData: user } = useContext(UserContext);
+  const userId = user.user.id;
+  const token1 = useToken();
+
+  useEffect(() => {
+    VerifyIfTicketExists(token1, setTicketOnline, setTicketPresential, setTicketWithoutHotel, setTicketWithHotel, setTicketId, setConfirmation);
+    VerifyIfPaymentExists(userId, token1, setPayed);
+  }, []);
   
   if(!enrollment) {
     return(
@@ -48,7 +63,7 @@ export default function Payment() {
           <StyledTitle>Ingresso escolhido</StyledTitle>
           <SummaryWrapper>
             {ticketOnline ? <SummaryBox><h1>Online</h1><br /><h2>R$ {totalSum}</h2></SummaryBox> : <></>}
-            {ticketPresential && ticketWithoutHoel ? <SummaryBox><h1>Presencial s/ Hotel</h1><br /><h2>R$ {totalSum}</h2></SummaryBox> : <></>}
+            {ticketPresential && ticketWithoutHotel ? <SummaryBox><h1>Presencial s/ Hotel</h1><br /><h2>R$ {totalSum}</h2></SummaryBox> : <></>}
             {ticketPresential && ticketWithHotel ? <SummaryBox><h1>Presencial + Hotel</h1><br /><h2>R$ {totalSum}</h2></SummaryBox> : <></>}
           </SummaryWrapper>
 
@@ -63,7 +78,7 @@ export default function Payment() {
             </PaymentConfirmationWrapper>
             :
             <CreditCardWrapper>
-              <CreditCard payed={payed} setPayed={setPayed} />
+              <CreditCard payed={payed} setPayed={setPayed} token={token1} ticketId={ticketId} enrollment={enrollment} />
             </CreditCardWrapper>}
         </>
         :
@@ -86,12 +101,12 @@ export default function Payment() {
             <HostWrapper>
               <StyledTitle>Ótimo! Agora escolha sua modalidade de hospedagem:</StyledTitle>
               <TicketTypeWrapper>
-                <div className={ticketWithoutHoel.toString()} onClick={() => {handlePayent.HostModel(setTicketWithoutHoel, setTicketWithHotel, 1);}}>
+                <div className={ticketWithoutHotel.toString()} onClick={() => {handlePayent.HostModel(setTicketWithoutHotel, setTicketWithHotel, 1);}}>
                   <h1>Sem Hotel</h1>
                   <h2>+ R$ {withoutHotel}</h2>
                 </div>
 
-                <div className={ticketWithHotel.toString()} onClick={() => {handlePayent.HostModel(setTicketWithoutHoel, setTicketWithHotel, 2);}}>
+                <div className={ticketWithHotel.toString()} onClick={() => {handlePayent.HostModel(setTicketWithoutHotel, setTicketWithHotel, 2);}}>
                   <h1>Com Hotel</h1>
                   <h2>+ R$ {withHotel}</h2>
                 </div>
@@ -100,15 +115,10 @@ export default function Payment() {
             :
             <></>}
 
-          {ticketOnline ?
-            <>Online</>
-            :
-            <></>}
-
-          {ticketWithoutHoel || ticketWithHotel || ticketOnline ?
+          {ticketWithoutHotel || ticketWithHotel || ticketOnline ?
             <ConfirmationWrapper>
               <h1>Fechado! O total ficou em R$ {totalSum}. Agora é só confirmar:</h1>
-              <BookButton onClick={() => {HandleBookTicket(totalSum, setConfirmation);}}>Reservar ingresso</BookButton>
+              <BookButton onClick={() => {HandleBookTicket(token1, ticketPresential, ticketOnline, ticketWithoutHotel, ticketWithHotel, enrollment, setConfirmation, setTicketId);}}>Reservar ingresso</BookButton>
             </ConfirmationWrapper>
             :
             <></>}
