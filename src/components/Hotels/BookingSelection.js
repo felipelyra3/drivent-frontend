@@ -1,10 +1,11 @@
-import { Hotels, HotelsWrapper, Rooms } from './HotelsSelectionWrapper';
+import { Hotels, HotelsWrapper, Rooms, Selectroom } from './HotelsSelectionWrapper';
 import HotelTemplade from './HotelCardTemplade';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import { useEffect, useState } from 'react';
 import useRooms from '../../hooks/api/useRooms';
 import RoomTemplate from './RoomTemplate';
+import useBooking from '../../hooks/api/useBooking';
 
 function sorted(data) {
   let aux = data.Rooms;
@@ -23,14 +24,24 @@ function sorted(data) {
 export default function BookingSelection({ data }) {
   const [selected, setSelected] = useState(null);
   const [roomdata, setRoomdata] = useState(null);
+  const [selectedroom, setSelectedroom] = useState(-1);
+  const [endselection, setEndselection] = useState(false);
   const { getrooms } = useRooms();
+  const { postbooking } = useBooking();
+
   useEffect(() => {
     if(selected) {
       getrooms(selected)
         .then((resp) => {const obj = sorted(resp); setRoomdata(obj);});
     }
   }, [selected]);
-  //console.log(roomdata); //occupied = vagas do quarto ocupadas
+
+  function sendData() {
+    if(selectedroom >= 0) {
+      postbooking({ 'roomId': selectedroom })
+        .then(() => {setEndselection(true);});
+    }
+  }
   return (
     <HotelsWrapper>
       <StyledTypography variant="h2">Primeiro, escolha seu hotel</StyledTypography>
@@ -41,21 +52,26 @@ export default function BookingSelection({ data }) {
           )
         }
       </Hotels>
-      {selected?
-        <Rooms>
-          {roomdata?roomdata.Rooms.map((el, index) => {  
-            if(el.capacity === 1 && roomdata.single == null) {
-              roomdata.single = true;
-              setRoomdata(roomdata);
-            }else if(el.capacity === 2 && roomdata.double == null) {
-              roomdata.double = true;
-              setRoomdata(roomdata);
-            }else if(el.capacity === 3 && roomdata.triple == null) {
-              roomdata.triple = true;
-              setRoomdata(roomdata);
-            };return <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} occupied={el.occupied}/>;}):null}
-        </Rooms>
+      {selected&&!endselection?
+        <>
+          <StyledTypography variant="h2">Ótima pedida! Agora escolha seu quarto:</StyledTypography>
+          <Rooms>
+            {roomdata?roomdata.Rooms.map((el, index) => {  
+              if(el.capacity === 1 && roomdata.single == null) {
+                roomdata.single = true;
+                setRoomdata(roomdata);
+              }else if(el.capacity === 2 && roomdata.double == null) {
+                roomdata.double = true;
+                setRoomdata(roomdata);
+              }else if(el.capacity === 3 && roomdata.triple == null) {
+                roomdata.triple = true;
+                setRoomdata(roomdata);
+              };return <RoomTemplate key={index} id={el.id} name={el.name} capacity={el.capacity} hotelId={el.hotelId} occupied={el.occupied} selectedroom={selectedroom} setSelectedroom={setSelectedroom}/>;}):null}
+          </Rooms>
+          <Selectroom onClick={sendData}>Reservar Quarto</Selectroom>
+        </>
         :null}
+      {endselection?<p>To do: mensagem de pedido realizado</p>: null}
     </HotelsWrapper>
   );
 }
