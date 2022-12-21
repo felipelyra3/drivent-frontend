@@ -16,10 +16,7 @@
     "html2canvas": "^1.3.2",
     "qs": "^6.10.1",
     "react": "^17.0.2",
-<<<<<<< HEAD
     "react-bootstrap-icons": "^1.10.2",
-=======
->>>>>>> 46c39a8c48b7c0133074a819161c66b0a88912f8
     "react-credit-cards": "^0.8.3",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
@@ -33,12 +30,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-<<<<<<< HEAD
     "start": "react-scripts start",
     "start-legacy": "react-scripts --openssl-legacy-provider start",
-=======
-    "start": "react-scripts --openssl-legacy-provider start",
->>>>>>> 46c39a8c48b7c0133074a819161c66b0a88912f8
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
