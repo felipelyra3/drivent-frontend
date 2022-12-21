@@ -1,20 +1,9 @@
 import { Typography } from '@material-ui/core';
-import { useEffect } from 'react';
 import styled from 'styled-components';
-import useToken from '../../../hooks/useToken';
-import * as api from '../../../services/ticketApi';
+import useTicket from '../../../hooks/api/useTicket';
 
 export default function Activities() {
-  const token = useToken();
-  const { ticket, setTicket } = {};
-
-  useEffect(() => {
-    const promise = api.getTicketById(token);
-    promise.then((res) => {
-      setTicket((ticket) => ({ ...ticket, ...res }));
-    })
-      .catch(() => {});
-  }, []);
+  const { ticket } = useTicket();
 
   if(!ticket) {
     return (
