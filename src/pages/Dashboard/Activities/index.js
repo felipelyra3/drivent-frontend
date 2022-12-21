@@ -49,11 +49,15 @@ export default function Activities() {
   return (
     <>
       <StyledTypography variant="h4">Escolha de Atividades</StyledTypography>
-      <ErrorWrapper>
-        <p>
-          Aguarde as atividades!
-        </p>
-      </ErrorWrapper>
+      <SubTitle>
+        Primeiro, filtre pelo dia do evento:
+      </SubTitle>
+      <Container>
+        <ActivityDate>Sexta, 22/10</ActivityDate>
+        <ActivityDate>Sábado, 23/10</ActivityDate>
+        <ActivityDate>Domingo, 24/10</ActivityDate>
+      </Container>
+
     </>
   );
 }
@@ -80,3 +84,36 @@ p{
 }
 `;
 
+const SubTitle = styled.span(() => ({
+  color: '#8E8E8E',
+  marginTop: '20px',
+  fontSize: '20px',
+  lineHeight: '23px',
+}));
+
+const Container = styled.div`
+  width: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 17px;
+`;
+
+const ActivityDate = styled.div`
+  width: 131px;
+  height:37px;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 23px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: center;
+`;
