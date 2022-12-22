@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import useRooms from '../../hooks/api/useRooms';
 import RoomTemplate from './RoomTemplate';
 import useBooking from '../../hooks/api/useBooking';
+import useBookingDone from '../../hooks/api/useBookingDone';
+import useBookingPut from '../../hooks/api/useBookingPut';
 
 function sorted(data) {
   let aux = data.Rooms;
@@ -24,10 +26,25 @@ function sorted(data) {
 export default function BookingSelection({ data }) {
   const [selected, setSelected] = useState(null);
   const [roomdata, setRoomdata] = useState(null);
-  const [selectedroom, setSelectedroom] = useState(-1);
+  const [selectedroom, setSelectedroom] = useState(0);
   const [endselection, setEndselection] = useState(false);
+  const [previousbooking, setPreviousbooking] = useState(-1);
   const { getrooms } = useRooms();
   const { postbooking } = useBooking();
+  const { getbooking } = useBookingDone();
+  const { putbooking } = useBookingPut();
+
+  useEffect(() => {
+    getbooking()
+      .then((resp) => {
+        setPreviousbooking(resp.id);
+        setEndselection(true);
+        const room = Number(resp.Room.id);
+        const hotel = Number(resp.Room.hotelId);
+        setSelected(hotel);
+        setSelectedroom(room);
+      }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if(selected) {
@@ -38,20 +55,38 @@ export default function BookingSelection({ data }) {
 
   function sendData() {
     if(selectedroom >= 0) {
-      postbooking({ 'roomId': selectedroom })
-        .then(() => {setEndselection(true);});
+      if(previousbooking>0) {
+        putbooking({ 'roomId': selectedroom }, previousbooking)
+          .then((resp) => {setPreviousbooking(resp.bookingId); setEndselection(true);});
+      }else {
+        postbooking({ 'roomId': selectedroom })
+          .then((resp) => {setPreviousbooking(resp.bookingId); setEndselection(true);});
+      }
     }
   }
   return (
     <HotelsWrapper>
-      <StyledTypography variant="h2">Primeiro, escolha seu hotel</StyledTypography>
-      <Hotels>
-        {
-          data?.map((el, i) => 
-            <HotelTemplade image={el.image} name={el.name} id={el.id} key={i} selected={selected} setSelected={setSelected}/>
-          )
-        }
-      </Hotels>
+      {endselection&&roomdata?<>
+        <StyledTypography variant="h2">Você já escolheu seu quarto:</StyledTypography>
+        <Hotels>
+          {
+            data?.filter(el => el.id === selected).map((el, i) => 
+              <HotelTemplade image={el.image} name={el.name} id={el.id} key={i} selected={selected} setSelected={setSelected} endselection={endselection} roomdata={roomdata.Rooms.filter(el => el.id === selectedroom)[0]}/>
+            )
+          }
+        </Hotels>
+        <Selectroom onClick={() => {setEndselection(false);}}>Trocar de Quarto</Selectroom>
+      </>:null}
+      {!endselection?<>
+        <StyledTypography variant="h2">Primeiro, escolha seu hotel</StyledTypography>
+        <Hotels>
+          {
+            data?.map((el, i) => 
+              <HotelTemplade image={el.image} name={el.name} id={el.id} key={i} selected={selected} setSelected={setSelected} endselection={endselection} roomdata={null}/>
+            )
+          }
+        </Hotels>
+      </>:null}
       {selected&&!endselection?
         <>
           <StyledTypography variant="h2">Ótima pedida! Agora escolha seu quarto:</StyledTypography>
@@ -71,7 +106,6 @@ export default function BookingSelection({ data }) {
           <Selectroom onClick={sendData}>Reservar Quarto</Selectroom>
         </>
         :null}
-      {endselection?<p>To do: mensagem de pedido realizado</p>: null}
     </HotelsWrapper>
   );
 }

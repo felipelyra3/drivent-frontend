@@ -27,6 +27,7 @@ export const Rooms = styled.div`
   row-gap: 10px;
   column-gap: 20px;
   margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 export const Room = styled.div`
@@ -56,11 +57,12 @@ export const Selectroom = styled.div`
   justify-content: center;
   width: 180px;
   min-height: 40px;
-  margin: 45px 0 45px 0;
+  margin: 25px 0 45px 0;
   background-color: #E0E0E0;
   border-radius: 4px;
   font-size: 14px;
-  filter: drop-shadow(10px 10px 20px #E0E0E0);
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
 `;
 
 export const Hotel = styled.div`
@@ -69,7 +71,9 @@ export const Hotel = styled.div`
     background-color: ${(props) => (props.selected ? '#FFEED2' : '#EBEBEB')};
     border-radius: 10px;
     padding: 14px;
-    color: rgba(60, 60, 60, 1);   
+    color: rgba(60, 60, 60, 1);  
+    cursor: ${(props) => (!props.selected ? 'pointer' : 'inherit')};
+
     h2{
      color: rgba(52, 52, 52, 1);
      margin: 10px 0 !important;
