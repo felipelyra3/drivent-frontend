@@ -48,10 +48,9 @@ export default function CreditCard({ payed, setPayed, token, ticketId, enrollmen
     };
 
     try {
-      const payment = await createPayment(body);
+      await createPayment(body);
       setPayed(true);
     } catch (error) {
-      console.log(error);
       toast('Erro!');
     }
   }
