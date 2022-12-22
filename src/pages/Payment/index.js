@@ -24,102 +24,193 @@ export default function Payment() {
   const online = 100;
   const withoutHotel = 0;
   const withHotel = 350;
-  const totalSum = TotalSum(ticketPresential, ticketOnline, ticketWithoutHotel, ticketWithHotel, presential, online, withoutHotel, withHotel);
-  
+  const totalSum = TotalSum(
+    ticketPresential,
+    ticketOnline,
+    ticketWithoutHotel,
+    ticketWithHotel,
+    presential,
+    online,
+    withoutHotel,
+    withHotel
+  );
+
   const { enrollment } = useEnrollment();
   const { userData: user } = useContext(UserContext);
   const userId = user.user.id;
   const token1 = useToken();
 
   useEffect(() => {
-    VerifyIfTicketExists(token1, setTicketOnline, setTicketPresential, setTicketWithoutHotel, setTicketWithHotel, setTicketId, setConfirmation);
+    VerifyIfTicketExists(
+      token1,
+      setTicketOnline,
+      setTicketPresential,
+      setTicketWithoutHotel,
+      setTicketWithHotel,
+      setTicketId,
+      setConfirmation
+    );
     VerifyIfPaymentExists(userId, token1, setPayed);
-  }, []);
-  
-  if(!enrollment) {
-    return(
+  }, [confirmation]);
+
+  if (!enrollment) {
+    return (
       <>
         <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
-        <Center>Você precisa completar sua inscrição antes<br /> de prosseguir pra escolha de ingresso</Center>
+        <Center>
+          Você precisa completar sua inscrição antes
+          <br /> de prosseguir pra escolha de ingresso
+        </Center>
       </>
     );
   }
-  
-  return(
+
+  return (
     <>
-      {confirmation ? 
+      {confirmation ? (
         <>
           <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
           <StyledTitle>Ingresso escolhido</StyledTitle>
           <SummaryWrapper>
-            {ticketOnline ? <SummaryBox><h1>Online</h1><br /><h2>R$ {totalSum}</h2></SummaryBox> : <></>}
-            {ticketPresential && ticketWithoutHotel ? <SummaryBox><h1>Presencial s/ Hotel</h1><br /><h2>R$ {totalSum}</h2></SummaryBox> : <></>}
-            {ticketPresential && ticketWithHotel ? <SummaryBox><h1>Presencial + Hotel</h1><br /><h2>R$ {totalSum}</h2></SummaryBox> : <></>}
+            {ticketOnline ? (
+              <SummaryBox>
+                <h1>Online</h1>
+                <br />
+                <h2>R$ {totalSum}</h2>
+              </SummaryBox>
+            ) : (
+              <></>
+            )}
+            {ticketPresential && ticketWithoutHotel ? (
+              <SummaryBox>
+                <h1>Presencial s/ Hotel</h1>
+                <br />
+                <h2>R$ {totalSum}</h2>
+              </SummaryBox>
+            ) : (
+              <></>
+            )}
+            {ticketPresential && ticketWithHotel ? (
+              <SummaryBox>
+                <h1>Presencial + Hotel</h1>
+                <br />
+                <h2>R$ {totalSum}</h2>
+              </SummaryBox>
+            ) : (
+              <></>
+            )}
           </SummaryWrapper>
 
-          {payed ?
+          {payed ? (
             <PaymentConfirmationWrapper>
               <StyledTitle>Ingresso escolhido</StyledTitle>
               <ContainerPaymentConfirmation>
                 <FaCheckCircleStyled />
-                <div className="text"><h1>Pagamento confirmado!</h1><br />
-                  <h2>Prossiga para escolha de hospedagem e atividades</h2></div>
+                <div className="text">
+                  <h1>Pagamento confirmado!</h1>
+                  <br />
+                  <h2>Prossiga para escolha de hospedagem e atividades</h2>
+                </div>
               </ContainerPaymentConfirmation>
             </PaymentConfirmationWrapper>
-            :
+          ) : (
             <CreditCardWrapper>
-              <CreditCard payed={payed} setPayed={setPayed} token={token1} ticketId={ticketId} enrollment={enrollment} />
-            </CreditCardWrapper>}
+              <CreditCard
+                payed={payed}
+                setPayed={setPayed}
+                token={token1}
+                ticketId={ticketId}
+                enrollment={enrollment}
+              />
+            </CreditCardWrapper>
+          )}
         </>
-        :
+      ) : (
         <>
           <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
           <StyledTitle>Primeiro, escolha sua modalidade de ingresso:</StyledTitle>
           <TicketTypeWrapper>
-            <div className={ticketPresential.toString()} onClick={() => {handlePayent.TicketModel(setTicketPresential, setTicketOnline, 1);}}>
+            <div
+              className={ticketPresential.toString()}
+              onClick={() => {
+                handlePayent.TicketModel(setTicketPresential, setTicketOnline, 1);
+              }}
+            >
               <h1>Presencial</h1>
               <h2>R$ {presential}</h2>
             </div>
 
-            <div className={ticketOnline.toString()} onClick={() => {handlePayent.TicketModel(setTicketPresential, setTicketOnline, 2);}}>
+            <div
+              className={ticketOnline.toString()}
+              onClick={() => {
+                handlePayent.TicketModel(setTicketPresential, setTicketOnline, 2);
+              }}
+            >
               <h1>Online</h1>
               <h2>R$ {online}</h2>
             </div>
           </TicketTypeWrapper>
 
-          {ticketPresential ?
+          {ticketPresential ? (
             <HostWrapper>
               <StyledTitle>Ótimo! Agora escolha sua modalidade de hospedagem:</StyledTitle>
               <TicketTypeWrapper>
-                <div className={ticketWithoutHotel.toString()} onClick={() => {handlePayent.HostModel(setTicketWithoutHotel, setTicketWithHotel, 1);}}>
+                <div
+                  className={ticketWithoutHotel.toString()}
+                  onClick={() => {
+                    handlePayent.HostModel(setTicketWithoutHotel, setTicketWithHotel, 1);
+                  }}
+                >
                   <h1>Sem Hotel</h1>
                   <h2>+ R$ {withoutHotel}</h2>
                 </div>
 
-                <div className={ticketWithHotel.toString()} onClick={() => {handlePayent.HostModel(setTicketWithoutHotel, setTicketWithHotel, 2);}}>
+                <div
+                  className={ticketWithHotel.toString()}
+                  onClick={() => {
+                    handlePayent.HostModel(setTicketWithoutHotel, setTicketWithHotel, 2);
+                  }}
+                >
                   <h1>Com Hotel</h1>
                   <h2>+ R$ {withHotel}</h2>
                 </div>
               </TicketTypeWrapper>
             </HostWrapper>
-            :
-            <></>}
+          ) : (
+            <></>
+          )}
 
-          {ticketWithoutHotel || ticketWithHotel || ticketOnline ?
+          {ticketWithoutHotel || ticketWithHotel || ticketOnline ? (
             <ConfirmationWrapper>
               <h1>Fechado! O total ficou em R$ {totalSum}. Agora é só confirmar:</h1>
-              <BookButton onClick={() => {HandleBookTicket(token1, ticketPresential, ticketOnline, ticketWithoutHotel, ticketWithHotel, enrollment, setConfirmation, setTicketId);}}>Reservar ingresso</BookButton>
+              <BookButton
+                onClick={() => {
+                  HandleBookTicket(
+                    token1,
+                    ticketPresential,
+                    ticketOnline,
+                    ticketWithoutHotel,
+                    ticketWithHotel,
+                    enrollment,
+                    setConfirmation,
+                    setTicketId
+                  );
+                }}
+              >
+                Reservar ingresso
+              </BookButton>
             </ConfirmationWrapper>
-            :
-            <></>}
-        </>}
-      
+          ) : (
+            <></>
+          )}
+        </>
+      )}
     </>
   );
 }
 
 const StyledTypography = styled(Typography)`
-  margin-bottom: 20px!important;
+  margin-bottom: 20px !important;
 `;
 
 const Center = styled.div`
@@ -135,185 +226,183 @@ const Center = styled.div`
   font-size: 20px;
   line-height: 23px;
   text-align: center;
-  color: #8E8E8E;
+  color: #8e8e8e;
 `;
 
 const TicketTypeWrapper = styled.div`
+  display: flex;
+  margin-top: 24px;
+
+  .container {
+    width: 145px;
+    height: 145px;
     display: flex;
-    margin-top: 24px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #cecece;
+    border-radius: 20px;
+    margin-right: 24px;
+    cursor: pointer;
+  }
 
-    .container {
-        width: 145px;
-        height: 145px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border: 1px solid #CECECE;
-        border-radius: 20px;
-        margin-right: 24px;
-        cursor: pointer;
-    }
+  .true {
+    width: 145px;
+    height: 145px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #cecece;
+    border-radius: 20px;
+    margin-right: 24px;
+    cursor: pointer;
+    background-color: #ffeed2;
+  }
 
-    .true {
-        width: 145px;
-        height: 145px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border: 1px solid #CECECE;
-        border-radius: 20px;
-        margin-right: 24px;
-        cursor: pointer;
-        background-color: #FFEED2;
-    }
+  .false {
+    width: 145px;
+    height: 145px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #cecece;
+    border-radius: 20px;
+    margin-right: 24px;
+    cursor: pointer;
+    background-color: #ffffff;
+  }
 
-    .false {
-        width: 145px;
-        height: 145px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border: 1px solid #CECECE;
-        border-radius: 20px;
-        margin-right: 24px;
-        cursor: pointer;
-        background-color: #FFFFFF;
-    }
+  h1 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    color: #454545;
+  }
 
-    h1 {
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 19px;
-        text-align: center;
-        color: #454545;
-    }
-
-    h2 {
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 16px;
-        text-align: center;
-        color: #898989;
-    }
+  h2 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    color: #898989;
+  }
 `;
 
 const HostWrapper = styled.div`
-    margin-top: 24px;
+  margin-top: 24px;
 `;
 
 const StyledTitle = styled.span`
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 23px;
+  color: #8e8e8e;
+`;
+
+const ConfirmationWrapper = styled.div`
+  margin-top: 24px;
+
+  h1 {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
     line-height: 23px;
-    color: #8E8E8E;
-`;
-
-const ConfirmationWrapper = styled.div`
-    margin-top: 24px;
-
-    h1 {
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 20px;
-        line-height: 23px;
-        color: #8E8E8E;
-    }
+    color: #8e8e8e;
+  }
 `;
 
 const BookButton = styled.button`
-    width: 162px;
-    height: 37px;
-    background: #E0E0E0;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
-    border-radius: 4px;
-    border: none;
-    margin-top: 24px;
+  width: 162px;
+  height: 37px;
+  background: #e0e0e0;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  border: none;
+  margin-top: 24px;
 `;
 
-const SummaryWrapper = styled.div`
-    
-`;
+const SummaryWrapper = styled.div``;
 
 const SummaryBox = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 290px;
-    height: 108px;
-    background: #FFEED2;
-    border-radius: 20px;
-    margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 290px;
+  height: 108px;
+  background: #ffeed2;
+  border-radius: 20px;
+  margin-top: 12px;
 
-    h1 {
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 19px;
-        text-align: center;
-        color: #454545;
-    }
+  h1 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    color: #454545;
+  }
 
-    h2 {
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 16px;
-        text-align: center;
-        color: #898989;
-    }
+  h2 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    color: #898989;
+  }
 `;
 
 const CreditCardWrapper = styled.div`
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    margin: 24px 0px 0px 0px;
-    //background-color: blue;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin: 24px 0px 0px 0px;
+  //background-color: blue;
 `;
 
 const PaymentConfirmationWrapper = styled.div`
-    margin-top: 24px;
+  margin-top: 24px;
 `;
 
 const ContainerPaymentConfirmation = styled.div`
-    display: flex;
-    align-items: center;
-    margin: 12px 0px 0px 12px;
+  display: flex;
+  align-items: center;
+  margin: 12px 0px 0px 12px;
 
-    h1 {
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 19px;
-        color: #454545;
-    }
+  h1 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #454545;
+  }
 
-    h2 {
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 16px;
-        color: #898989;
-    }
+  h2 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #898989;
+  }
 `;
 
-const FaCheckCircleStyled  = styled(FaCheckCircle)`
-  color: #36B853;
+const FaCheckCircleStyled = styled(FaCheckCircle)`
+  color: #36b853;
   transform: scale(3);
   margin-right: 24px;
 `;
