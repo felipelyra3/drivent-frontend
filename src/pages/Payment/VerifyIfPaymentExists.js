@@ -1,6 +1,3 @@
-import { useContext } from 'react';
-import UserContext from '../../contexts/UserContext';
-import useEnrollment from '../../hooks/api/useEnrollment';
 import { getPaymentByTicketId } from '../../services/paymentApi';
 import { getTicketById } from '../../services/ticketApi';
 
