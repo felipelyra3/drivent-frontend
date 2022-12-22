@@ -18,7 +18,7 @@ export default function Activities() {
     );
   }
 
-  if(!ticket.status === 'PAID') {
+  if(ticket.status === 'RESERVED') {
     return (
       <>
         <StyledTypography variant="h4">Escolha de Atividades</StyledTypography>
