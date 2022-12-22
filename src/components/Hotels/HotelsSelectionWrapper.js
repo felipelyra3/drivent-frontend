@@ -71,7 +71,9 @@ export const Hotel = styled.div`
     background-color: ${(props) => (props.selected ? '#FFEED2' : '#EBEBEB')};
     border-radius: 10px;
     padding: 14px;
-    color: rgba(60, 60, 60, 1);   
+    color: rgba(60, 60, 60, 1);  
+    cursor: ${(props) => (!props.selected ? 'pointer' : 'inherit')};
+
     h2{
      color: rgba(52, 52, 52, 1);
      margin: 10px 0 !important;

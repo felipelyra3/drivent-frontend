@@ -1,14 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
-import { Row, Title, Label, StyledContainer } from '../../components/Auth';
-import Input from '../../components/Form/Input';
-import Button from '../../components/Form/Button';
-import AuthLayout from '../../layouts/Auth';
-import EventInfoContext from '../../contexts/EventInfoContext';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import UserContext from '../../contexts/UserContext';
 import useEnrollment from '../../hooks/api/useEnrollment';
-import axios from 'axios';
 import handlePayent from './HandleSelection';
 import TotalSum from './TotalSum';
 import HandleBookTicket from './HandleBookTicket';
@@ -26,15 +20,11 @@ export default function Payment() {
   const [confirmation, setConfirmation] = useState(false);
   const [payed, setPayed] = useState(false);
   const [ticketId, setTicketId] = useState(null);
-  //const [userId, setUserId] = useState(0);
-  const [enrollmentState, setEnrollmentState] = useState([]);
   const presential = 250;
   const online = 100;
   const withoutHotel = 0;
   const withHotel = 350;
   const totalSum = TotalSum(ticketPresential, ticketOnline, ticketWithoutHotel, ticketWithHotel, presential, online, withoutHotel, withHotel);
-  //const { eventInfo } = useContext(EventInfoContext);
-  //const { userData: data } = useContext(UserContext);
   
   const { enrollment } = useEnrollment();
   const { userData: user } = useContext(UserContext);

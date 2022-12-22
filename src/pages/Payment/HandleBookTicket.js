@@ -1,8 +1,6 @@
 import { toast } from 'react-toastify';
-import useEnrollment from '../../hooks/api/useEnrollment';
 import { createTicket, getTicketTypes } from '../../services/ticketApi';
 import GetTicketTypeId from './GetTicketTypeId';
-import OrganizeTicketTypes from './OrganizeTicketTypes';
 
 export default async function HandleBookTicket(token, ticketPresential, ticketOnline, ticketWithoutHotel, ticketWithHotel, enrollment, setConfirmation, setTicketId) {
   const userId = enrollment.id;

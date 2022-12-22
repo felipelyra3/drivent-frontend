@@ -25,7 +25,8 @@ export default function Hotels() {
       });
     getTicket()
       .then(resp => {
-        if(resp.TicketType.isRemote) {setPaymentRequired(false);}
+        if(!resp.TicketType.includesHotel
+        ) {setPaymentRequired(false);}
       })
       .catch(err => {/*TODO: A pessoa ainda não tem ticket */});
     // eslint-disable-next-line react-hooks/exhaustive-deps
