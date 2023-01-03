@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Venue from './Venue';
 
 export default function ActivitiesSelection() {
+  const [selectedActivity, setSelectedActivity] = useState(0);
   const [selectedDay, setSelectedDay] = useState(null);
   const [data, setData] = useState([//criar rota no back que retorna atividades pela data
     { id: 1, date: 'Sexta, 22/10', Activities: [{ id: 1, name: 'Minecraft: montando o PC ideal',
@@ -36,7 +37,7 @@ export default function ActivitiesSelection() {
       </Container>
       {selectedDay==null?null:<GridVenue>
         {selectedDay.Activities.filter((value, index, self) => index === self.findIndex((t) => (t.venue === value.venue)))
-          .map((el, index) => {return <Venue key={index} id={el.venue} name={el.ActivitiesVenue.name} data={selectedDay.Activities}/>; })}        
+          .map((el, index) => {return <Venue key={index} id={el.venue} name={el.ActivitiesVenue.name} data={selectedDay.Activities.filter((elem) => (elem.venue === el.venue))} selectedActivity={selectedActivity} setSelectedActivity={setSelectedActivity}/>; })}        
       </GridVenue>}
     </>
   );
