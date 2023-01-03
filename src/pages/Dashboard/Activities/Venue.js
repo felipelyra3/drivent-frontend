@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import ActivitieCard from './ActivitieCard';
 
-export default function Venue({ id, name, data, selectedActivity, setSelectedActivity }) {
+export default function Venue({ id, name, data }) {
   return (
     <Body>
       <SubTitle>{name}</SubTitle>
       <Content>
-        {data.map((el, index) => <ActivitieCard key={index} id={el.id} name={el.name} startsAt={el.startsAt} endsAt={el.endsAt} vacancy={el.vacancy} ActivitySubscription={el.ActivitySubscription} selectedActivity={selectedActivity} setSelectedActivity={setSelectedActivity}/>)}
+        {data.map((el, index) => <ActivitieCard key={index} id={el.id} name={el.name} startsAt={el.startsAt} endsAt={el.endsAt} vacancy={el.vacancy} ActivitySubscription={el.ActivitySubscription}/>)}
       </Content>
     </Body>
   );
@@ -16,13 +16,14 @@ const Body = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
+  min-height: 100%;
+  height: fit-content;
   min-width: 290px;
 `;
 
 const Content = styled.div`
-  height: auto;
   min-height: calc(100% - 40px);
+  height: fit-content;
   width: 100%;
   border: 1px solid #D7D7D7;
   padding-top: 10px;
