@@ -1,15 +1,23 @@
 import styled from 'styled-components';
 import { BoxArrowInRight, XCircle, CheckCircle } from 'react-bootstrap-icons';
+import { useState } from 'react';
 
-export default function ActivitieCard({ id, name, startsAt, endsAt, vacancy, ActivitySubscription, selectedActivity, setSelectedActivity }) {
+export default function ActivitieCard({ id, name, startsAt, endsAt, vacancy, ActivitySubscription }) {
+  const [selectedActivity, setSelectedActivity] = useState(false);
+  function calculateHeigth() {
+    const hour = Number(endsAt.slice(0, 2)) - Number(startsAt.slice(0, 2));
+    const minute = Number(endsAt.slice(3, 5)) - Number(startsAt.slice(3, 5));
+    const result = (hour + minute/60);
+    return (result*80 + (Math.ceil(result)-1)*10)+'px';
+  }
   return (
-    <Content color={selectedActivity===id} onClick={() => { if(vacancy>ActivitySubscription.length) {setSelectedActivity(id);} }}>
+    <Content h={calculateHeigth()} color={selectedActivity} onClick={() => { if(vacancy>ActivitySubscription.length) {setSelectedActivity(!selectedActivity);} }}>
       <Infos>
         <h1>{name}</h1>
         <p>{startsAt} - {endsAt}</p>
       </Infos>
-      <Vacancies color={selectedActivity!==id && vacancy===ActivitySubscription.length}>
-        {selectedActivity===id?
+      <Vacancies color={!selectedActivity && vacancy===ActivitySubscription.length}>
+        {selectedActivity?
           <>
             <CheckCircle size={20} color='#078632'/>
             <p>Inscrito</p>
@@ -30,7 +38,7 @@ export default function ActivitieCard({ id, name, startsAt, endsAt, vacancy, Act
 const Content = styled.div`
   display: flex;
   width: calc(100% - 20px);
-  height: 80px;
+  height: ${(props) => (props.h)};
   margin: 0 10px 10px 10px;
   padding: 10px 0 10px 10px;
   background-color: ${(props) => (props.color?'#D0FFDB':'#F1F1F1')};
