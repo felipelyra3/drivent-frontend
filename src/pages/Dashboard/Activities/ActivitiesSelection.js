@@ -7,19 +7,19 @@ export default function ActivitiesSelection() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [data, setData] = useState([//criar rota no back que retorna atividades pela data
     { id: 1, date: 'Sexta, 22/10', Activities: [{ id: 1, name: 'Minecraft: montando o PC ideal',
-      date: 'Sexta, 22/10', startsAt: '09:00', endsAt: '10:00', vacancy: 27, venue: 1, 
+      date: 'Sexta, 22/10', startsAt: '09:00', endsAt: '11:00', vacancy: 27, venue: 1, 
       ActivitiesVenue: { id: 1, name: 'Auditório Principal' }, ActivitySubscription: [] },
     { id: 2, name: 'LoL: montando o PC ideal',
-      date: 'Sexta, 22/10', startsAt: '10:00', endsAt: '11:00', vacancy: 0, venue: 1, 
+      date: 'Sexta, 22/10', startsAt: '11:00', endsAt: '13:00', vacancy: 0, venue: 1, 
       ActivitiesVenue: { id: 1, name: 'Auditório Principal' }, ActivitySubscription: [] },
     { id: 3, name: 'Palestra x',
-      date: 'Sexta, 22/10', startsAt: '09:00', endsAt: '11:00', vacancy: 27, venue: 2, 
+      date: 'Sexta, 22/10', startsAt: '09:00', endsAt: '13:00', vacancy: 27, venue: 2, 
       ActivitiesVenue: { id: 2, name: 'Auditório Lateral' }, ActivitySubscription: [] },
     { id: 4, name: 'Palestra y',
       date: 'Sexta, 22/10', startsAt: '09:00', endsAt: '10:00', vacancy: 27, venue: 3, 
       ActivitiesVenue: { id: 3, name: 'Sala de Workshop' }, ActivitySubscription: [] },
     { id: 5, name: 'Palestra z',
-      date: 'Sexta, 22/10', startsAt: '10:00', endsAt: '11:00', vacancy: 0, venue: 3, 
+      date: 'Sexta, 22/10', startsAt: '10:00', endsAt: '11:45', vacancy: 0, venue: 3, 
       ActivitiesVenue: { id: 3, name: 'Sala de Workshop' }, ActivitySubscription: [] }] },
     { id: 2, date: 'Sábado, 23/10', Activities: [] },
     { id: 3, date: 'Domingo, 24/10', Activities: [] }
@@ -36,7 +36,7 @@ export default function ActivitiesSelection() {
       </Container>
       {selectedDay==null?null:<GridVenue>
         {selectedDay.Activities.filter((value, index, self) => index === self.findIndex((t) => (t.venue === value.venue)))
-          .map((el, index) => {return <Venue key={index} id={el.venue} name={el.ActivitiesVenue.name} data={selectedDay.Activities}/>; })}        
+          .map((el, index) => {return <Venue key={index} id={el.venue} name={el.ActivitiesVenue.name} data={selectedDay.Activities.filter((elem) => (elem.venue === el.venue))}/>; })}       
       </GridVenue>}
     </>
   );
@@ -84,7 +84,8 @@ const ActivityDate = styled.div`
 
 const GridVenue = styled.div`
   display: flex;
-  height: 365px;
+  min-height: 365px;
+  height: fit-content;
   width: 100%;
   margin: 0 0 55px 0;
 `;
