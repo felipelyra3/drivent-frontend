@@ -13,7 +13,16 @@ import EventInfoContext from '../../contexts/EventInfoContext';
 
 import useSignUp from '../../hooks/api/useSignUp';
 
+import axios from 'axios';
+import { redirectToGitHub, verifyIfGitHubCodeExists } from './githublogin';
+import { githubSignIn } from '../../services/authApi';
+import { useParams } from 'react-router-dom';
+
 export default function Enroll() {
+  localStorage.setItem('token', '');
+  
+  verifyIfGitHubCodeExists();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -40,6 +49,20 @@ export default function Enroll() {
     }
   }
 
+  async function githubLogin() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    /* axios.post('/auth/sign-in/github', { code }).then((res) => {
+      localStorage.setItem('token', res.data.token);
+    }); */
+    try {
+      const test = await githubSignIn(code);
+      console.log(test);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <AuthLayout background={eventInfo.backgroundImageUrl}>
       <Row>
@@ -57,6 +80,8 @@ export default function Enroll() {
       </Row>
       <Row>
         <Link to="/sign-in">Já está inscrito? Faça login</Link>
+        <button className="githubloginbutton" onClick={() => {redirectToGitHub();}}>AAAAAAAAA</button>
+        <script type="module" src="enrollindex.js"></script>
       </Row>
     </AuthLayout>
   );
