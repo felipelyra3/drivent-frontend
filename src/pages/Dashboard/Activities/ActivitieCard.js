@@ -1,9 +1,25 @@
 import styled from 'styled-components';
 import { BoxArrowInRight, XCircle, CheckCircle } from 'react-bootstrap-icons';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import usePostActivity from '../../../hooks/api/usePostActivity';
+import useGetActivityByUser from '../../../hooks/api/useGetActivityByUser';
 
 export default function ActivitieCard({ id, name, startsAt, endsAt, vacancy, ActivitySubscription }) {
   const [selectedActivity, setSelectedActivity] = useState(false);
+  const [hasSelected, setHasSelected] = useState(false);
+  const { postactivity } = usePostActivity();
+  const { getactivitybyuserid } = useGetActivityByUser();
+  useEffect(() => {
+    if(selectedActivity && !hasSelected) {
+      postactivity({ activityId: id });
+    }
+  }, [selectedActivity]);
+  
+  useEffect(() => {
+    getactivitybyuserid(id).then(() => {setHasSelected(true); setSelectedActivity(true);});
+  });
+
   function calculateHeigth() {
     const hour = Number(endsAt.slice(0, 2)) - Number(startsAt.slice(0, 2));
     const minute = Number(endsAt.slice(3, 5)) - Number(startsAt.slice(3, 5));
@@ -11,12 +27,12 @@ export default function ActivitieCard({ id, name, startsAt, endsAt, vacancy, Act
     return (result*80 + (Math.ceil(result)-1)*10)+'px';
   }
   return (
-    <Content h={calculateHeigth()} color={selectedActivity} onClick={() => { if(vacancy>ActivitySubscription.length) {setSelectedActivity(!selectedActivity);} }}>
+    <Content h={calculateHeigth()} color={selectedActivity.toString()} onClick={() => { if(vacancy>ActivitySubscription.length) {setSelectedActivity(!selectedActivity);} }}>
       <Infos>
         <h1>{name}</h1>
         <p>{startsAt} - {endsAt}</p>
       </Infos>
-      <Vacancies color={!selectedActivity && vacancy===ActivitySubscription.length}>
+      <Vacancies color={(!selectedActivity && vacancy===ActivitySubscription.length).toString()}>
         {selectedActivity?
           <>
             <CheckCircle size={20} color='#078632'/>
@@ -41,7 +57,7 @@ const Content = styled.div`
   height: ${(props) => (props.h)};
   margin: 0 10px 10px 10px;
   padding: 10px 0 10px 10px;
-  background-color: ${(props) => (props.color?'#D0FFDB':'#F1F1F1')};
+  background-color: ${(props) => (props.color==='true'?'#D0FFDB':'#F1F1F1')};
   border-radius: 5px;
 `;
 
@@ -56,7 +72,7 @@ const Vacancies = styled.div`
   p {
     margin-top: 5px;
     font-size: 9px;
-    color: ${(props) => (props.color?'#CC6666':'#078632')};
+    color: ${(props) => (props.color==='true'?'#CC6666':'#078632')};
   }
 `;
 
