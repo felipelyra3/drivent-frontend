@@ -13,15 +13,31 @@ import EventInfoContext from '../../contexts/EventInfoContext';
 
 import useSignUp from '../../hooks/api/useSignUp';
 
-import axios from 'axios';
 import { redirectToGitHub, verifyIfGitHubCodeExists } from './githublogin';
-import { githubSignIn } from '../../services/authApi';
-import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import UserContext from '../../contexts/UserContext';
 
 export default function Enroll() {
-  localStorage.setItem('token', '');
-  
-  verifyIfGitHubCodeExists();
+  const { setUserData } = useContext(UserContext);  
+  handleGitHub();
+
+  async function handleGitHub() {
+    const verifyGitHub = await verifyIfGitHubCodeExists();
+
+    if(verifyGitHub) {
+      console.log(verifyGitHub);
+      const body = {
+        token: verifyGitHub.token,
+        user: {
+          id: verifyGitHub.id,
+          email: verifyGitHub.email,
+        }
+      };
+      setUserData(body);
+      toast('Login realizado com sucesso!');
+      navigate('/dashboard');
+    }
+  }
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,20 +65,6 @@ export default function Enroll() {
     }
   }
 
-  async function githubLogin() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    /* axios.post('/auth/sign-in/github', { code }).then((res) => {
-      localStorage.setItem('token', res.data.token);
-    }); */
-    try {
-      const test = await githubSignIn(code);
-      console.log(test);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   return (
     <AuthLayout background={eventInfo.backgroundImageUrl}>
       <Row>
@@ -80,9 +82,37 @@ export default function Enroll() {
       </Row>
       <Row>
         <Link to="/sign-in">Já está inscrito? Faça login</Link>
-        <button className="githubloginbutton" onClick={() => {redirectToGitHub();}}>AAAAAAAAA</button>
-        <script type="module" src="enrollindex.js"></script>
+        <GitHub><button className="githubloginbutton" onClick={() => {redirectToGitHub();}}>Login with GitHub</button></GitHub>
       </Row>
     </AuthLayout>
   );
 }
+
+const GitHub = styled.div`
+  margin-top: 12px;
+
+  button {
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+	background-color:#ffffff;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#666666;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+button:hover {
+	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+	background-color:#f6f6f6;
+}
+button:active {
+	position:relative;
+	top:1px;
+}
+`;
