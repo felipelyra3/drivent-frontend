@@ -1,29 +1,39 @@
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt';
 import styled from 'styled-components';
 import { Typography } from '@material-ui/core';
 import { useState } from 'react';
 import Venue from './Venue';
+import useGetActivityDays from '../../../hooks/api/useGetActivityDays';
+import { useEffect } from 'react';
+import useGetActivityOfDay from '../../../hooks/api/useGetActivityOfDay';
+
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
+
+function convertData(arraydata) {
+  for(let i=0; i<arraydata.length; i++) {
+    arraydata[i] = dayjs(arraydata[i]).format('YYYY/MM/DD').slice(0, 10).replace('/', '-').replace('/', '-');
+  }
+  return arraydata.filter((item,
+    index) => arraydata.indexOf(item) === index);
+}
 
 export default function ActivitiesSelection() {
   const [selectedDay, setSelectedDay] = useState(null);
-  const [data, setData] = useState([//criar rota no back que retorna atividades pela data
-    { id: 1, date: 'Sexta, 22/10', Activities: [{ id: 1, name: 'Minecraft: montando o PC ideal',
-      date: 'Sexta, 22/10', startsAt: '09:00', endsAt: '10:00', vacancy: 27, venue: 1, 
-      ActivitiesVenue: { id: 1, name: 'Auditório Principal' }, ActivitySubscription: [] },
-    { id: 2, name: 'LoL: montando o PC ideal',
-      date: 'Sexta, 22/10', startsAt: '10:00', endsAt: '11:00', vacancy: 0, venue: 1, 
-      ActivitiesVenue: { id: 1, name: 'Auditório Principal' }, ActivitySubscription: [] },
-    { id: 3, name: 'Palestra x',
-      date: 'Sexta, 22/10', startsAt: '09:00', endsAt: '11:00', vacancy: 27, venue: 2, 
-      ActivitiesVenue: { id: 2, name: 'Auditório Lateral' }, ActivitySubscription: [] },
-    { id: 4, name: 'Palestra y',
-      date: 'Sexta, 22/10', startsAt: '09:00', endsAt: '10:00', vacancy: 27, venue: 3, 
-      ActivitiesVenue: { id: 3, name: 'Sala de Workshop' }, ActivitySubscription: [] },
-    { id: 5, name: 'Palestra z',
-      date: 'Sexta, 22/10', startsAt: '10:00', endsAt: '11:00', vacancy: 0, venue: 3, 
-      ActivitiesVenue: { id: 3, name: 'Sala de Workshop' }, ActivitySubscription: [] }] },
-    { id: 2, date: 'Sábado, 23/10', Activities: [] },
-    { id: 3, date: 'Domingo, 24/10', Activities: [] }
-  ]);
+  const { getactivitydays } = useGetActivityDays();
+  const { getactivityofday } = useGetActivityOfDay();
+  const [dateData, setDateData] = useState(null);
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    getactivitydays().then((res) => {const data = convertData(res); setDateData(data);});
+  }, []);
+  useEffect(() => {
+    if(selectedDay) {
+      getactivityofday(selectedDay).then((res) => { setData(res);});
+    }
+  }, [selectedDay]);
   return (
     <>
       <StyledTypography variant="h4">Escolha de Atividades</StyledTypography>
@@ -32,11 +42,10 @@ export default function ActivitiesSelection() {
           Primeiro, filtre pelo dia do evento:
         </SubTitle>:null}
       <Container>
-        {data?.map((el) => {return <ActivityDate key={el.id} selected={selectedDay?.id===el.id} onClick={() => {setSelectedDay(el);}}>{el.date}</ActivityDate>; })}
+        {dateData?.map((el, index) => {return <ActivityDate key={index} selected={selectedDay===el} onClick={() => {setSelectedDay(el);}}>{dayjs(el).locale('pt').format('dddd, DD/MM')}</ActivityDate>; })}
       </Container>
       {selectedDay==null?null:<GridVenue>
-        {selectedDay.Activities.filter((value, index, self) => index === self.findIndex((t) => (t.venue === value.venue)))
-          .map((el, index) => {return <Venue key={index} id={el.venue} name={el.ActivitiesVenue.name} data={selectedDay.Activities}/>; })}        
+        {data?.map((el) => {return <Venue key={el.id} name={el.name} data={el.Activities}/>; })}       
       </GridVenue>}
     </>
   );
@@ -84,7 +93,8 @@ const ActivityDate = styled.div`
 
 const GridVenue = styled.div`
   display: flex;
-  height: 365px;
+  min-height: 365px;
+  height: auto;
   width: 100%;
   margin: 0 0 55px 0;
 `;
