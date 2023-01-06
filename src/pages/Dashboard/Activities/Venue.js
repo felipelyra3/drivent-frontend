@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import ActivitieCard from './ActivitieCard';
 
-export default function Venue({ id, name, data }) {
+export default function Venue({ name, data }) {
   return (
     <Body>
       <SubTitle>{name}</SubTitle>
@@ -17,13 +17,13 @@ const Body = styled.div`
   flex-direction: column;
   align-items: center;
   min-height: 100%;
-  height: fit-content;
+  height: auto;
   min-width: 290px;
 `;
 
 const Content = styled.div`
   min-height: calc(100% - 40px);
-  height: fit-content;
+  height: auto;
   width: 100%;
   border: 1px solid #D7D7D7;
   padding-top: 10px;
