@@ -4,21 +4,25 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import usePostActivity from '../../../hooks/api/usePostActivity';
 import useGetActivityByUser from '../../../hooks/api/useGetActivityByUser';
+import useActivityUnsubscribe from '../../../hooks/api/useActivityUnsubscribe';
 
 export default function ActivitieCard({ id, name, startsAt, endsAt, vacancy, ActivitySubscription }) {
   const [selectedActivity, setSelectedActivity] = useState(false);
   const [hasSelected, setHasSelected] = useState(false);
   const { postactivity } = usePostActivity();
   const { getactivitybyuserid } = useGetActivityByUser();
+  const { activityunsubscribe } = useActivityUnsubscribe();
   useEffect(() => {
     if(selectedActivity && !hasSelected) {
-      postactivity({ activityId: id });
+      postactivity({ activityId: id }).then(() => {setHasSelected(true);}).catch(() => {});
+    } else if(!selectedActivity && hasSelected) {
+      activityunsubscribe(id).then(() => {setHasSelected(false);}).catch(() => {});
     }
   }, [selectedActivity]);
   
   useEffect(() => {
-    getactivitybyuserid(id).then(() => {setHasSelected(true); setSelectedActivity(true);});
-  });
+    getactivitybyuserid(id).then(() => {setHasSelected(true); setSelectedActivity(true);}).catch(() => {setHasSelected(false); setSelectedActivity(false);});
+  }, [id]);
 
   function calculateHeigth() {
     const hour = Number(endsAt.slice(0, 2)) - Number(startsAt.slice(0, 2));
@@ -27,13 +31,13 @@ export default function ActivitieCard({ id, name, startsAt, endsAt, vacancy, Act
     return (result*80 + (Math.ceil(result)-1)*10)+'px';
   }
   return (
-    <Content h={calculateHeigth()} color={selectedActivity.toString()} onClick={() => { if(vacancy>ActivitySubscription.length) {setSelectedActivity(!selectedActivity);} }}>
+    <Content h={calculateHeigth()} color={hasSelected.toString()} onClick={() => { if(vacancy>ActivitySubscription.length) {setSelectedActivity(!selectedActivity);} }}>
       <Infos>
         <h1>{name}</h1>
         <p>{startsAt} - {endsAt}</p>
       </Infos>
-      <Vacancies color={(!selectedActivity && vacancy===ActivitySubscription.length).toString()}>
-        {selectedActivity?
+      <Vacancies color={(!hasSelected && vacancy===ActivitySubscription.length).toString()}>
+        {hasSelected?
           <>
             <CheckCircle size={20} color='#078632'/>
             <p>Inscrito</p>
