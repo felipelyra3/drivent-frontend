@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { githubSignIn } from '../../services/authApi';
 
 export function redirectToGitHub() { 
   const GITHUB_URL = 'https://github.com/login/oauth/authorize';
@@ -17,12 +16,11 @@ export function redirectToGitHub() {
 export async function verifyIfGitHubCodeExists() {
   const queryParams = new URLSearchParams(window.location.search);
   const code = queryParams.get('code');
-  
+
   if(code) {
-    //console.log(code);
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}auth/sign-in/github`, { code });
-      return response.data;
+      const response = await githubSignIn(code);
+      return response;
     } catch (error) {
       console.log(error);
     }
