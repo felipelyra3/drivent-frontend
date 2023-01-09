@@ -25,7 +25,6 @@ export default function Enroll() {
     const verifyGitHub = await verifyIfGitHubCodeExists();
 
     if(verifyGitHub) {
-      console.log(verifyGitHub);
       const body = {
         token: verifyGitHub.token,
         user: {
