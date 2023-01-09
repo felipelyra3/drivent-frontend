@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { BoxArrowInRight, XCircle, CheckCircle } from 'react-bootstrap-icons';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 import usePostActivity from '../../../hooks/api/usePostActivity';
 import useGetActivityByUser from '../../../hooks/api/useGetActivityByUser';
 import useActivityUnsubscribe from '../../../hooks/api/useActivityUnsubscribe';
@@ -14,7 +15,7 @@ export default function ActivitieCard({ id, name, startsAt, endsAt, vacancy, Act
   const { activityunsubscribe } = useActivityUnsubscribe();
   useEffect(() => {
     if(selectedActivity && !hasSelected) {
-      postactivity({ activityId: id }).then(() => {setHasSelected(true);}).catch(() => {});
+      postactivity({ activityId: id }).then(() => {setHasSelected(true);}).catch(() => {toast('Não foi possível realizar inscrição!');});
     } else if(!selectedActivity && hasSelected) {
       activityunsubscribe(id).then(() => {setHasSelected(false);}).catch(() => {});
     }
